@@ -36,7 +36,7 @@ int main()
       cout << i - len2 + 2 << endl;
   }
   for (int i = 1; i <= len2; i++)
-    cout << kmp[i];
+    cout << kmp[i]<<" ";
   system("pause");
   return 0;
 }
