@@ -1,6 +1,9 @@
 #include<iostream>
-#include<time.h>
+#include<chrono>
+#include<thread>
+#include<windows.h>
 using namespace std;
+using namespace std::chrono;
 struct position
 {
 	int position_x = -1;
@@ -23,10 +26,23 @@ void Print(void);
 void Clear(void);
 void Drop(void);
 void Fill(void);
-int Search(position arr[], int i, int get_score);
+int Search(position arr[100], int i, int get_score);
+void pause()
+{
+	std::this_thread::sleep_for(seconds(5));
+	system("cls");
+	cout << "timeout"<<endl;
+for(int i=0;i<3;i++)
+{
+	cout<<'\a';
+	Sleep(1000);
+}
+	system("pause");
+}
 int main()
 {
-	cout <<"score:" <<score << endl;
+	std::thread thread(pause);
+	cout << "score:" << score << endl;
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -42,7 +58,7 @@ int main()
 		Drop();
 		Fill();
 		system("cls");
-		cout <<"score:"<< score << endl;
+		cout << "score:" << score << endl;
 		Print();
 		judge = Judge();
 	}
@@ -177,11 +193,11 @@ void Print(void)
 			if (i == 0 && j == 0)
 				cout << "  ";
 			else if (i == 0)
-				cout << j-1 << " ";
+				cout << j - 1 << " ";
 			else if (j == 0)
-				cout << i-1 << " ";
+				cout << i - 1 << " ";
 			else
-				cout << plot[i-1][j-1] << " ";
+				cout << plot[i - 1][j - 1] << " ";
 		}
 		cout << endl;
 	}
