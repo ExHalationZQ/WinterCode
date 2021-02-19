@@ -1,7 +1,7 @@
-#include<iostream>
-#include<chrono>
-#include<thread>
-#include<windows.h>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <windows.h>
 using namespace std;
 using namespace std::chrono;
 struct position
@@ -9,40 +9,44 @@ struct position
 	int position_x = -1;
 	int position_y = -1;
 };
-bool operator ==(position x, position y)
+const int N = 10;
+char plot[N][N];
+bool judge = true;
+int score = 0;
+int tool1 = 0, tool2 = 0;
+char GetRandom(void);
+bool Judge(void);
+void Print(void);
+void Clear(int swh);
+void Drop(void);
+void Fill(void);
+int Search(position arr[100], int i, int get_score);
+void Tools(void);
+bool operator==(position x, position y)
 {
 	if (x.position_x == y.position_x && x.position_y == y.position_y)
 		return true;
 	else
 		return false;
 }
-const int N = 10;
-char plot[N][N];
-bool judge = true;
-int score = 0;
-char GetRandom(void);
-bool Judge(void);
-void Print(void);
-void Clear(void);
-void Drop(void);
-void Fill(void);
-int Search(position arr[100], int i, int get_score);
 void pause()
 {
-	std::this_thread::sleep_for(seconds(5));
+	std::this_thread::sleep_for(seconds(180));
 	system("cls");
-	cout << "timeout"<<endl;
-for(int i=0;i<3;i++)
-{
-	cout<<'\a';
-	Sleep(1000);
-}
+	cout << "timeout" << endl;
+	for (int i = 0; i < 3; i++)
+	{
+		cout << '\a';
+		Sleep(1000);
+	}
 	system("pause");
 }
 int main()
 {
-	std::thread thread(pause);
+	//std::thread thread(pause);
 	cout << "score:" << score << endl;
+	cout << "输入坐标或输入10使用道具" << endl;
+	cout << "单次消除6个及以上送道具2一个，单次消除8个及以上送道具1一个" << endl;
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
@@ -54,21 +58,28 @@ int main()
 	judge = Judge();
 	while (judge)
 	{
-		Clear();
+		int swh = 0;
+		cin >> swh;
+		if (swh >= 0 && swh <= 9)
+			Clear(swh);
+		else
+			Tools();
 		Drop();
 		Fill();
 		system("cls");
 		cout << "score:" << score << endl;
+		cout << "输入坐标或输入10使用道具" << endl;
 		Print();
 		judge = Judge();
 	}
 	return 0;
 }
-void Clear()
+void Clear(int swh)
 {
 	int get_score = 0, last = -1;
 	position arr[100];
-	cin >> arr[0].position_x >> arr[0].position_y;
+	arr[0].position_x = swh;
+	cin >> arr[0].position_y;
 	if (arr[0].position_x >= 0 && arr[0].position_x <= 9 && arr[0].position_y >= 0 && arr[0].position_y <= 9)
 	{
 		while (last != get_score)
@@ -80,7 +91,13 @@ void Clear()
 			}
 		}
 		if (get_score >= 1)
+		{
 			score += get_score >= 6 ? get_score + 3 + 1 : get_score + 1;
+			if (get_score >= 5)
+				tool2++;
+			if (get_score >= 7)
+				tool1++;
+		}
 		else
 		{
 			cout << "wrong answer" << endl;
@@ -97,7 +114,7 @@ void Clear()
 	else
 	{
 		cout << "please input correct position" << endl;
-		Clear();
+		Clear(swh);
 	}
 }
 int Search(position arr[100], int i, int get_score)
@@ -318,4 +335,77 @@ bool Judge(void)
 		return true;
 	same = 0;
 	return false;
+}
+void Tools(void)
+{
+	cout << "按1消除全部某色块，按2消除某列，按3消除某行,2、3共用道具2个数" << endl;
+	cout << "道具1剩余:" << tool1 << "道具2剩余:"<<tool2 << endl;
+	int choose, get_score = 0;
+	cin >> choose;
+	if (choose == 1)
+	{
+		if (tool1 >= 1)
+		{
+			char clear;
+			cin >> clear;
+			for (int i = 0; i < N; i++)
+				for (int j = 0; j < N; j++)
+				{
+					if (plot[i][j] == clear)
+					{
+						plot[i][j] = '\0';
+						get_score++;
+					}
+				}
+			score += get_score;
+			tool1--;
+			return;
+		}
+		else
+		{
+			cout << "no tool1 left"<<endl;
+			system("pause");
+			return;
+		}
+	}
+	else if (choose == 2)
+	{
+		if (tool2 >= 1)
+		{
+			int column;
+			cin >> column;
+			for (int i = 0; i < N; i++)
+				plot[i][column] = '\0';
+			get_score += 10;
+			score += get_score;
+			tool2--;
+			return;
+		}
+		else
+		{
+			cout << "no tool2 left" << endl;
+			system("pause");
+			return;
+		}
+	}
+	else if (choose == 3)
+	{
+		if(tool2>=1)
+		{
+			int line;
+			cin >> line;
+			for (int i = 0; i < N; i++)
+				plot[line][i] = '\0';
+			get_score += 10;
+			score += get_score;
+			tool2--;
+			return;
+		}
+		else 
+		{
+			cout << "no tool2 left" << endl;
+			system("pause");
+			return;
+		}
+	}
 }
