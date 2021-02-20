@@ -43,7 +43,7 @@ void pause()
 }
 int main()
 {
-	//std::thread thread(pause);
+	std::thread thread(pause);
 	cout << "score:" << score << endl;
 	cout << "输入坐标或输入10使用道具" << endl;
 	cout << "单次消除6个及以上送道具2一个，单次消除8个及以上送道具1一个" << endl;
